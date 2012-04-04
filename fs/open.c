@@ -677,7 +677,7 @@ static int do_dentry_open(struct file *f,
 
 	f->f_op = fops_get(inode->i_fop);
 
-	error = security_dentry_open(f, cred);
+	error = security_file_open(f, cred);
 	if (error)
 		goto cleanup_all;
 
