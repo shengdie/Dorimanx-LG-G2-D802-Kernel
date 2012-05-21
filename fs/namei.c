@@ -2622,6 +2622,9 @@ finish_lookup:
 	error = -EISDIR;
 	if (S_ISDIR(nd->inode->i_mode))
 		goto exit;
+	error = -ENOTDIR;
+	if ((nd->flags & LOOKUP_DIRECTORY) && !nd->inode->i_op->lookup)
+		goto exit;
 ok:
 	if (!S_ISREG(nd->inode->i_mode))
 		will_truncate = false;
