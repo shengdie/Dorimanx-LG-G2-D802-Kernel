@@ -457,8 +457,11 @@ ifdef CONFIG_MSM_CPR
 obj-$(CONFIG_DEBUG_FS) += msm_cpr-debug.o
 endif
 obj-$(CONFIG_MSM_CPU_PWRCTL) +=  msm_cpu_pwrctl.o
+<<<<<<< HEAD
 
 obj-$(CONFIG_LCD_KCAL_STANDALONE) += msm_kcal_ctrl.o
+=======
+>>>>>>> 90bb3d4... USB Force Fast charge
 obj-$(CONFIG_ARCH_RANDOM) += early_random.o
 
 obj-$(CONFIG_RAMDUMP_TAGS) += board-rdtags.o
@@ -469,4 +472,9 @@ CFLAGS_board-rdtags.o	:= \
 
 obj-y += power_debug.o
 obj-$(CONFIG_MSM_MODEM_SUBSYSTEM_RESTART_MONITOR) += modem_restart_monitor.o
+<<<<<<< HEAD
 obj-$(CONFIG_HAS_MACH_MEMUTILS) += memutils/
+=======
+
+obj-$(CONFIG_FORCE_FAST_CHARGE) += fastchg.o
+>>>>>>> 90bb3d4... USB Force Fast charge
