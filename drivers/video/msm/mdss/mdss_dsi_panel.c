@@ -704,14 +704,13 @@ static void mdss_panel_parse_te_params(struct device_node *np,
 	panel_info->te.refx100 = (!rc ? tmp : 6000);
 }
 
-static int mdss_panel_parse_dt(struct platform_device *pdev,
-			      struct mdss_panel_common_pdata *panel_data)
+static int mdss_panel_parse_dt(struct device_node *np,
+			       struct mdss_panel_common_pdata *panel_data)
 {
 	u32 tmp;
 	int rc, i, len;
 	const char *data;
 	static const char *pdest;
-	struct device_node *np = pdev->dev.of_node;
 	struct mdss_panel_info *pinfo = &panel_data->panel_info;
 
 	rc = of_property_read_u32(np, "qcom,mdss-pan-id", &tmp);
@@ -771,8 +770,9 @@ static int mdss_panel_parse_dt(struct platform_device *pdev,
 				pinfo->mipi.dst_format =
 			DSI_VIDEO_DST_FORMAT_RGB888;
 	}
-	pdest = of_get_property(pdev->dev.of_node,
+	pdest = of_get_property(np,
 		"qcom,mdss-dsi-panel-destination", NULL);
+
 	if (strlen(pdest) != 9) {
 		pr_err("%s: Unknown pdest specified\n", __func__);
 		return -EINVAL;
@@ -1155,7 +1155,8 @@ static int __devinit mdss_dsi_panel_probe(struct platform_device *pdev)
 	const char *driver_name = this_driver.driver.name;
 	bool partial_update_enabled;
 
-	pr_debug("%s:%d, debug info id=%d", __func__, __LINE__, pdev->id);
+	pr_debug("%s:%d, debug info", __func__, __LINE__);
+
 	if (!pdev->dev.of_node)
 		return -ENODEV;
 
@@ -1167,7 +1168,7 @@ static int __devinit mdss_dsi_panel_probe(struct platform_device *pdev)
 	else
 		pr_info("%s: Panel Name = %s\n", __func__, panel_name);
 
-	rc = mdss_panel_parse_dt(pdev, &vendor_pdata);
+	rc = mdss_panel_parse_dt(pdev->dev.of_node, &vendor_pdata);
 	if (rc)
 		return rc;
 
@@ -1192,7 +1193,7 @@ static int __devinit mdss_dsi_panel_probe(struct platform_device *pdev)
 	vendor_pdata.off = mdss_dsi_panel_off;
 	vendor_pdata.bl_fnc = mdss_dsi_panel_bl_ctrl;
 
-	rc = dsi_panel_device_register(pdev, &vendor_pdata);
+	rc = dsi_panel_device_register(pdev->dev.of_node, &vendor_pdata, true);
 	if (rc)
 		return rc;
 
@@ -1215,6 +1216,36 @@ static int __devinit mdss_dsi_panel_probe(struct platform_device *pdev)
 	return rc;
 }
 
+int mdss_dsi_panel_init(struct device_node *node,
+	struct mdss_panel_common_pdata *vendor_pdata)
+{
+	int rc = 0;
+	static const char *panel_name;
+
+	if (!node) {
+		pr_err("%s: no panel node\n", __func__);
+		return -ENODEV;
+	}
+
+	pr_debug("%s:%d\n", __func__, __LINE__);
+	panel_name = of_get_property(node, "qcom,mdss-dsi-panel-name", NULL);
+	if (!panel_name)
+		pr_info("%s:%d, Panel name not specified\n",
+						__func__, __LINE__);
+	else
+		pr_info("%s: Panel Name = %s\n", __func__, panel_name);
+
+	rc = mdss_panel_parse_dt(node, vendor_pdata);
+	if (rc)
+		return rc;
+
+	vendor_pdata->on = mdss_dsi_panel_on;
+	vendor_pdata->off = mdss_dsi_panel_off;
+	vendor_pdata->bl_fnc = mdss_dsi_panel_bl_ctrl;
+
+	return 0;
+}
+
 static const struct of_device_id mdss_dsi_panel_match[] = {
 	{.compatible = "qcom,mdss-dsi-panel"},
 	{}
@@ -1228,8 +1259,8 @@ static struct platform_driver this_driver = {
 	},
 };
 
-static int __init mdss_dsi_panel_init(void)
+static int __init mdss_dsi_pan_init(void)
 {
 	return platform_driver_register(&this_driver);
 }
-module_init(mdss_dsi_panel_init);
+module_init(mdss_dsi_pan_init);
