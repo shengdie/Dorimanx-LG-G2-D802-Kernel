@@ -52,7 +52,7 @@ spinlock_t tz_lock;
  * frame length, but less than the idle timer.
  */
 #define CEILING			50000
-#define SWITCH_OFF		200
+#define SWITCH_OFF		128
 #define SWITCH_OFF_RESET_TH	40
 #define SKIP_COUNTER		500
 #define TZ_RESET_ID		0x3
@@ -99,18 +99,24 @@ static ssize_t tz_governor_store(struct kgsl_device *device,
 				struct kgsl_pwrscale *pwrscale,
 				 const char *buf, size_t count)
 {
+	char str[20];
 	struct tz_priv *priv = pwrscale->priv;
 	struct kgsl_pwrctrl *pwr = &device->pwrctrl;
+	int ret;
+
+	ret = sscanf(buf, "%20s", str);
+	if (ret != 1)
+		return -EINVAL;
 
 	mutex_lock(&device->mutex);
 
-	if (!strncmp(buf, "ondemand", 8))
+	if (!strncmp(str, "ondemand", 8))
 		priv->governor = TZ_GOVERNOR_ONDEMAND;
 #ifdef CONFIG_MSM_KGSL_SIMPLE_GOV
-	else if (!strncmp(buf, "simple", 6))
+	else if (!strncmp(str, "simple", 6))
 		priv->governor = TZ_GOVERNOR_SIMPLE;
 #endif
-	else if (!strncmp(buf, "performance", 11))
+	else if (!strncmp(str, "performance", 11))
 		priv->governor = TZ_GOVERNOR_PERFORMANCE;
 
 	if (priv->governor == TZ_GOVERNOR_PERFORMANCE)
@@ -129,7 +135,7 @@ static struct attribute *tz_attrs[] = {
 
 static struct attribute_group tz_attr_group = {
 	.attrs = tz_attrs,
-	.name = "trustzone",
+
 };
 
 static void tz_wake(struct kgsl_device *device, struct kgsl_pwrscale *pwrscale)
