@@ -15,7 +15,7 @@ export PACKAGEDIR=$KERNELDIR/READY-JB
 export USE_SEC_FIPS_MODE=true
 export ARCH=arm
 export CROSS_COMPILE=$PARENT_DIR/../sm-arm-eabi-4.8.3/bin/arm-eabi-
-export KERNEL_CONFIG=alucard_ge_defconfig;
+export KERNEL_CONFIG=alucard_defconfig;
 
 chmod -R 777 /tmp;
 
