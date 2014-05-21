@@ -84,7 +84,6 @@
 #ifdef CONFIG_TARGET_CORE
 #include "f_tcm.c"
 #endif
-#include "f_hid.h"
 
 MODULE_AUTHOR("Mike Lockwood");
 MODULE_DESCRIPTION("Android Composite USB Driver");
