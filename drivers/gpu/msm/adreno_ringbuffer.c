@@ -86,6 +86,10 @@ adreno_ringbuffer_waitspace(struct adreno_ringbuffer *rb,
 			GSL_RB_GET_READPTR(rb, &rb->rptr);
 		} while (!rb->rptr);
 
+		rb->wptr++;
+
+		adreno_ringbuffer_submit(rb);
+
 		rb->wptr = 0;
 	}
 
@@ -1080,8 +1084,6 @@ adreno_ringbuffer_issueibcmds(struct kgsl_device_private *dev_priv,
 		drawctxt->timestamp = *timestamp;
 	} else
 		drawctxt->timestamp++;
-
-	flags &= KGSL_CMD_FLAGS_EOF;
 
 	/*
 	 * For some targets, we need to execute a dummy shader operation after a

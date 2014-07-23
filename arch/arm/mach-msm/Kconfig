@@ -36,7 +36,6 @@ config ARCH_MSM7X27
 	select CLEANCACHE
 	select QCACHE
 	select MSM_PM2 if PM
-	select MSM_RUN_QUEUE_STATS if MSM_SOC_REV_A
 	select DONT_MAP_HOLE_AFTER_MEMBANK0
 	select MIGHT_HAVE_CACHE_L2X0
 	select MSM_MODEM_RESTART
@@ -139,7 +138,6 @@ config ARCH_MSM8X60
 	select MULTI_IRQ_HANDLER
 	select MSM_MULTIMEDIA_USE_ION
 	select MSM_PM8X60 if PM
-	select MSM_RUN_QUEUE_STATS
 	select ARM_HAS_SG_CHAIN
 
 config ARCH_MSM8960
@@ -173,7 +171,6 @@ config ARCH_MSM8960
 	select MULTI_IRQ_HANDLER
 	select MSM_PM8X60 if PM
 	select HOLES_IN_ZONE if SPARSEMEM
-	select MSM_RUN_QUEUE_STATS
 	select ARM_HAS_SG_CHAIN
 	select MSM_KRAIT_WFE_FIXUP
 	select MSM_IOMMU_GPU_SYNC
@@ -279,7 +276,6 @@ config ARCH_MSM8974
 	select MSM_AUDIO_QDSP6V2 if SND_SOC
 	select MSM_RPM_REGULATOR_SMD
 	select ARM_HAS_SG_CHAIN
-	select MSM_RUN_QUEUE_STATS
 
 config ARCH_MPQ8092
 	bool "MPQ8092"
@@ -359,7 +355,6 @@ config ARCH_MSM8625
 	select ARCH_MSM_CORTEXMP
 	select MULTI_IRQ_HANDLER
 	select ARM_TICKET_LOCKS
-	select MSM_RUN_QUEUE_STATS
 	select MIGHT_HAVE_CACHE_L2X0
 	select ARM_HAS_SG_CHAIN
 
@@ -967,7 +962,6 @@ config MACH_MSM_DUMMY
 
 endmenu
 
-source "arch/arm/mach-msm/lge/Kconfig"
 
 config MSM_STACKED_MEMORY
 	bool "Stacked Memory"
@@ -1675,12 +1669,32 @@ config MSM_CPU_FREQ_SET_MIN_MAX
 config MSM_CPU_FREQ_MAX
 	int "Max CPU Frequency"
 	depends on MSM_CPU_FREQ_SET_MIN_MAX
-	default 384000
+	default 1512000
 
 config MSM_CPU_FREQ_MIN
 	int "Min CPU Frequency"
 	depends on MSM_CPU_FREQ_SET_MIN_MAX
-	default 245760
+	default 384000
+
+config MSM_MPDEC
+	bool "Enable kernel based mpdecision"
+	depends on MSM_SMP
+	default y
+	help
+	  This enables kernel based multi core control.
+	  (up/down hotplug based on load)
+
+config CPU_VOLTAGE_TABLE
+	bool "Enable CPU Voltage Table via sysfs for adjustements"
+	default n
+	help
+	  Krait User Votlage Control
+
+config GPU_OVERCLOCK
+	bool "Enable GPU Overclocking option"
+	default n
+	help
+	  Adreno3xx overclocking up to 627 MHz
 
 endif # CPU_FREQ_MSM
 
@@ -2902,4 +2916,16 @@ config MSM_MODEM_SUBSYSTEM_RESTART_MONITOR
 	  This option enables a module which can notify user-space
 	  applications of modem subsystem power up/down event via uevent.
 
+config UPDATE_LCDC_LUT
+        bool "Set initial Qualcomm LCDC lut"
+        default y
+        help
+          Set initial Qualcomm LCDC Look Up Table.
+ 
+
+config LCD_KCAL
+        tristate "MSM generic LCDC Calibration"
+        default y
+        help
+          Enable MSM generic LCDC temperature Calibration.        
 endif
