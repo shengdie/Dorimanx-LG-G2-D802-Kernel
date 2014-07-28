@@ -376,19 +376,15 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wno-strict-prototypes -Wno-trigraphs -Wno-arra
                    -funswitch-loops -fpredictive-commoning -fgcse-after-reload \
                    -fmodulo-sched -fmodulo-sched-allow-regmoves \
 		   -mfpu=neon-vfpv4 -mtune=cortex-a15  -mcpu=cortex-a15
-
 KBUILD_AFLAGS_KERNEL :=
-<<<<<<< HEAD
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 KBUILD_AFLAGS_MODULE  := -DMODULE
 KBUILD_CFLAGS_MODULE  := -DMODULE
-=======
 KBUILD_CFLAGS_KERNEL := -mtune=cortex-a15 -march=armv7-a -mfpu=neon-vfpv4 -funsafe-math-optimizations
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 KBUILD_AFLAGS_MODULE  := -DMODULE
 KBUILD_CFLAGS_MODULE  := -DMODULE -mtune=cortex-a15 -march=armv7-a -mfpu=neon-vfpv4 -funsafe-math-optimizations
->>>>>>> 1c9e021... add vfpv4 optimizations for Krait
 KBUILD_LDFLAGS_MODULE := -T $(srctree)/scripts/module-common.lds
 
 # Read KERNELRELEASE from include/config/kernel.release (if it exists)
