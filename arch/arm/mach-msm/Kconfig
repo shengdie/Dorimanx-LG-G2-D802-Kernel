@@ -2927,5 +2927,12 @@ config LCD_KCAL
         tristate "MSM generic LCDC Calibration"
         default y
         help
-          Enable MSM generic LCDC temperature Calibration.        
+          Enable MSM generic LCDC temperature Calibration.
+
+config HAS_MACH_MEMUTILS
+	default y
+	bool "Motorola MSM memcpy enhancements"
+	help
+	Faster memcpy performance for Krait
+        
 endif

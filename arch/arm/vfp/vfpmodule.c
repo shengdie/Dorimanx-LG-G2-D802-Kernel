@@ -635,8 +635,6 @@ int vfp_restore_user_hwstate(struct user_vfp __user *ufp,
 	return err ? -EFAULT : 0;
 }
 
-<<<<<<< HEAD
-=======
 void vfp_kmode_exception(void)
 {
 	/*

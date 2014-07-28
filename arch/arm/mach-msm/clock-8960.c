@@ -3608,7 +3608,7 @@ static struct clk_freq_tbl clk_tbl_gfx3d_8064_oc[] = {
 static unsigned long fmax_gfx3d_8064_oc[VDD_DIG_NUM]  = {
 	[VDD_DIG_LOW]     = 128000000,
 	[VDD_DIG_NOMINAL] = 325000000,
-	[VDD_DIG_HIGH]    = 627000000
+	[VDD_DIG_HIGH]    = 533000000
 };
 #else
 static struct clk_freq_tbl clk_tbl_gfx3d_8064[] = {

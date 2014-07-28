@@ -439,3 +439,4 @@ CFLAGS_board-rdtags.o	:= \
 obj-y += power_debug.o
 obj-$(CONFIG_MSM_MODEM_SUBSYSTEM_RESTART_MONITOR) += modem_restart_monitor.o
 obj-$(CONFIG_LCD_KCAL) += msm_kcal_ctrl.o
+obj-$(CONFIG_HAS_MACH_MEMUTILS) += memutils/
