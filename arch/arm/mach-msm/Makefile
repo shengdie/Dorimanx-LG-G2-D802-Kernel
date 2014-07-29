@@ -421,6 +421,10 @@ obj-$(CONFIG_ARCH_MSM9625) += gpiomux-v2.o gpiomux.o
 
 obj-$(CONFIG_MSM_SLEEP_STATS_DEVICE) += idle_stats_device.o
 obj-$(CONFIG_MSM_DCVS) += msm_dcvs_scm.o msm_dcvs.o
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_MSM_RUN_QUEUE_STATS) += msm_rq_stats.o
+>>>>>>> 74d28af... fastcharge
 obj-$(CONFIG_MSM_SHOW_RESUME_IRQ) += msm_show_resume_irq.o
 obj-$(CONFIG_BT_MSM_PINTEST)  += btpintest.o
 obj-$(CONFIG_MSM_FAKE_BATTERY) += fish_battery.o
@@ -467,4 +471,9 @@ CFLAGS_board-rdtags.o	:= \
 
 obj-y += power_debug.o
 obj-$(CONFIG_MSM_MODEM_SUBSYSTEM_RESTART_MONITOR) += modem_restart_monitor.o
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_FORCE_FAST_CHARGE) += fastchg.o
+obj-$(CONFIG_LCD_KCAL) += msm_kcal_ctrl.o
+>>>>>>> 74d28af... fastcharge
 obj-$(CONFIG_HAS_MACH_MEMUTILS) += memutils/

@@ -1,7 +1,12 @@
 VERSION = 3
 PATCHLEVEL = 4
+<<<<<<< HEAD
 SUBLEVEL = 103
 EXTRAVERSION =
+=======
+SUBLEVEL = 0
+EXTRAVERSION = lightning-kernel-cm11-version-9
+>>>>>>> 74d28af... fastcharge
 NAME = Saber-toothed Squirrel
 
 # *DOCUMENTATION*
@@ -374,7 +379,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -Wno-format-security \
 		   -fno-delete-null-pointer-checks
 KBUILD_AFLAGS_KERNEL :=
-KBUILD_CFLAGS_KERNEL :=
+KBUILD_CFLAGS_KERNEL := 
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 KBUILD_AFLAGS_MODULE  := -DMODULE
 KBUILD_CFLAGS_MODULE  := -DMODULE
