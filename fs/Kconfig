@@ -280,8 +280,6 @@ endif # NETWORK_FILESYSTEMS
 source "fs/nls/Kconfig"
 source "fs/dlm/Kconfig"
 
-<<<<<<< HEAD
-=======
 config DYNAMIC_FSYNC
 	bool "dynamic file sync control"
 	default n
@@ -318,5 +316,4 @@ config AIO_OPTIMIZATION
 	default y
 	help
 	  An experimental AIO FS kernel optimization
->>>>>>> 0617321... exfat: AIO Optimization compatibility fixup
 endmenu
