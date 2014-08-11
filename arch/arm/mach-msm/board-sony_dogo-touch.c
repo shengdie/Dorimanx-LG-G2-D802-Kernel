@@ -52,34 +52,10 @@ static struct evgen_record double_tap[] = {
 	},
 };
 
-static struct evgen_record two_swipe[] = {
-	{
-		.type = EVGEN_LOG,
-		.data.log.message = "=== Swipe ===",
-	},
-	{
-		.type = EVGEN_KEY,
-		.data.key.code = KEY_POWER,
-		.data.key.down = true,
-	},
-	{
-		.type = EVGEN_KEY,
-		.data.key.code = KEY_POWER,
-		.data.key.down = false,
-	},
-	{
-		.type = EVGEN_END,
-	},
-};
-
 static struct evgen_block evgen_blocks[] = {
 	{
 		.name = "double_tap",
 		.records = double_tap,
-	},
-        {
-		.name = "two_swipe",
-		.records = two_swipe,
 	},
 	{
 		.name = NULL,
@@ -87,13 +63,14 @@ static struct evgen_block evgen_blocks[] = {
 	}
 };
 
+
 struct evgen_block *clearpad_evgen_block_get(u8 module_id, u8 rev)
 {
 	return evgen_blocks;
 }
 
 struct synaptics_easy_wakeup_config clearpad_easy_wakeup_config = {
-	.gesture_enable = true,
+	.gesture_enable = false,
 	.large_panel = false,
 	.timeout_delay = 2000,
 };

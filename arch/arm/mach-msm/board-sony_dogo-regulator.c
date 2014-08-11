@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2011-2012, Code Aurora Forum. All rights reserved.
- * Copyright (C) 2012 Sony Mobile Communications AB.
+ * Copyright (C) 2012-2013 Sony Mobile Communications AB.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -80,6 +80,7 @@ VREG_CONSUMERS(L9) = {
 	REGULATOR_SUPPLY("apds9702_vdd",	"2-0054"),
 	REGULATOR_SUPPLY("mpu3050_vdd",		"2-0068"),
 	REGULATOR_SUPPLY("bma250_vdd",		"2-0018"),
+	REGULATOR_SUPPLY("bma250_vdd",		"2-0068"),
 	REGULATOR_SUPPLY("akm8963_vdd",		"2-000c"),
 	REGULATOR_SUPPLY("irda_vcc",		"irda"),
 };
@@ -190,6 +191,7 @@ VREG_CONSUMERS(S4) = {
 	REGULATOR_SUPPLY("vcc_i2c",		"3-0024"),
 	REGULATOR_SUPPLY("vddp",		"0-0048"),
 	REGULATOR_SUPPLY("hdmi_lvl_tsl",	"hdmi_msm.0"),
+	REGULATOR_SUPPLY("vdd-io",		"spi0.2"),
 	REGULATOR_SUPPLY("touch_vio",		"3-002c"),
 };
 VREG_CONSUMERS(S5) = {
@@ -215,6 +217,7 @@ VREG_CONSUMERS(LVS4) = {
 	REGULATOR_SUPPLY("apds9702_vio",	"2-0054"),
 	REGULATOR_SUPPLY("mpu3050_vio",		"2-0068"),
 	REGULATOR_SUPPLY("bma250_vio",		"2-0018"),
+	REGULATOR_SUPPLY("bma250_vio",		"2-0068"),
 	REGULATOR_SUPPLY("akm8963_vio",		"2-000c"),
 	REGULATOR_SUPPLY("irda_vio",		"irda"),
 };
@@ -539,15 +542,15 @@ apq8064_gpio_regulator_pdata[] __devinitdata = {
 /* SAW regulator constraints */
 struct regulator_init_data msm8064_saw_regulator_pdata_8921_s5 =
 	/*	      ID  vreg_name	       min_uV   max_uV */
-	SAW_VREG_INIT(S5, "8921_s5",	       600000, 1450000);
+	SAW_VREG_INIT(S5, "8921_s5",	       850000, 1300000);
 struct regulator_init_data msm8064_saw_regulator_pdata_8921_s6 =
-	SAW_VREG_INIT(S6, "8921_s6",	       600000, 1450000);
+	SAW_VREG_INIT(S6, "8921_s6",	       850000, 1300000);
 
 struct regulator_init_data msm8064_saw_regulator_pdata_8821_s0 =
 	/*	      ID       vreg_name	min_uV  max_uV */
-	SAW_VREG_INIT(8821_S0, "8821_s0",       600000, 1450000);
+	SAW_VREG_INIT(8821_S0, "8821_s0",       850000, 1300000);
 struct regulator_init_data msm8064_saw_regulator_pdata_8821_s1 =
-	SAW_VREG_INIT(8821_S1, "8821_s1",       600000, 1450000);
+	SAW_VREG_INIT(8821_S1, "8821_s1",       850000, 1300000);
 
 /* PM8921 regulator constraints */
 struct pm8xxx_regulator_platform_data
@@ -599,7 +602,7 @@ apq8064_rpm_regulator_init_data[] __devinitdata = {
 	/*	ID a_on pd ss min_uV   max_uV  supply sys_uA  freq  fm  ss_fm */
 	RPM_SMPS(S1, 1, 1, 0, 1225000, 1225000, NULL, 100000, 3p20, NONE, NONE),
 	RPM_SMPS(S2, 0, 1, 0, 1300000, 1300000, NULL,      0, 1p60, NONE, NONE),
-	RPM_SMPS(S3, 0, 1, 1,  500000, 1250000, NULL, 100000, 4p80, NONE, NONE),
+	RPM_SMPS(S3, 0, 1, 1,  500000, 1150000, NULL, 100000, 4p80, NONE, NONE),
 	RPM_SMPS(S4, 1, 1, 0, 1800000, 1800000, NULL, 100000, 1p60, NONE, NONE),
 	RPM_SMPS(S7, 0, 0, 0, 1300000, 1300000, NULL, 100000, 3p20, NONE, NONE),
 
@@ -626,7 +629,7 @@ apq8064_rpm_regulator_init_data[] __devinitdata = {
 	RPM_LDO(L17, 0, 1, 0, 3000000, 3000000, NULL,          0,     0),
 	RPM_LDO(L18, 0, 1, 0, 1200000, 1200000, "8921_s4",     0,     0),
 	RPM_LDO(L23, 1, 1, 0, 1800000, 1800000, NULL,          0,     0),
-	RPM_LDO(L24, 0, 1, 1,  750000, 1250000, "8921_s1", 10000, 10000),
+	RPM_LDO(L24, 0, 1, 1,  750000, 1150000, "8921_s1", 10000, 10000),
 	RPM_LDO(L25, 1, 1, 0, 1250000, 1250000, "8921_s1", 10000, 10000),
 	RPM_LDO(L27, 0, 0, 0, 1100000, 1100000, "8921_s7",     0,     0),
 	RPM_LDO(L28, 0, 1, 0, 1050000, 1200000, "8921_s7",     0,     0),

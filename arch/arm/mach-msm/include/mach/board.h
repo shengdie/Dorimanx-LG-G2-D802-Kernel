@@ -485,9 +485,6 @@ struct msm_fb_platform_data {
 	int (*allow_set_offset)(void);
 	char prim_panel_name[PANEL_NAME_MAX_LEN];
 	char ext_panel_name[PANEL_NAME_MAX_LEN];
-	#ifdef CONFIG_UPDATE_LCDC_LUT
-   	int (*update_lcdc_lut)(void);
- 	#endif
 };
 
 struct msm_hdmi_platform_data {
@@ -603,6 +600,7 @@ void mpq8092_init_gpiomux(void);
 struct mmc_platform_data;
 int msm_add_sdcc(unsigned int controller,
 		struct mmc_platform_data *plat);
+int msm_add_uio(void);
 
 void msm_pm_register_irqs(void);
 struct msm_usb_host_platform_data;

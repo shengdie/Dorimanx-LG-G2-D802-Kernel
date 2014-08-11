@@ -36,6 +36,7 @@ config ARCH_MSM7X27
 	select CLEANCACHE
 	select QCACHE
 	select MSM_PM2 if PM
+	select MSM_RUN_QUEUE_STATS if MSM_SOC_REV_A
 	select DONT_MAP_HOLE_AFTER_MEMBANK0
 	select MIGHT_HAVE_CACHE_L2X0
 	select MSM_MODEM_RESTART
@@ -138,6 +139,7 @@ config ARCH_MSM8X60
 	select MULTI_IRQ_HANDLER
 	select MSM_MULTIMEDIA_USE_ION
 	select MSM_PM8X60 if PM
+	select MSM_RUN_QUEUE_STATS
 	select ARM_HAS_SG_CHAIN
 
 config ARCH_MSM8960
@@ -171,6 +173,7 @@ config ARCH_MSM8960
 	select MULTI_IRQ_HANDLER
 	select MSM_PM8X60 if PM
 	select HOLES_IN_ZONE if SPARSEMEM
+	select MSM_RUN_QUEUE_STATS
 	select ARM_HAS_SG_CHAIN
 	select MSM_KRAIT_WFE_FIXUP
 	select MSM_IOMMU_GPU_SYNC
@@ -276,6 +279,7 @@ config ARCH_MSM8974
 	select MSM_AUDIO_QDSP6V2 if SND_SOC
 	select MSM_RPM_REGULATOR_SMD
 	select ARM_HAS_SG_CHAIN
+	select MSM_RUN_QUEUE_STATS
 
 config ARCH_MPQ8092
 	bool "MPQ8092"
@@ -355,6 +359,7 @@ config ARCH_MSM8625
 	select ARCH_MSM_CORTEXMP
 	select MULTI_IRQ_HANDLER
 	select ARM_TICKET_LOCKS
+	select MSM_RUN_QUEUE_STATS
 	select MIGHT_HAVE_CACHE_L2X0
 	select ARM_HAS_SG_CHAIN
 
@@ -923,11 +928,29 @@ config MACH_SONY_DOGO
 	help
 	  Support for the Sony Mobile Dogo device.
 
+config MACH_SONY_DOGO_DCM
+	depends on MACH_SONY_FUSION3
+	bool "Sony Mobile Dogo DCM"
+	help
+	  Support for the Sony Mobile Dogo docomo device.
+
+config MACH_SONY_GAGA_KDDI
+	depends on MACH_SONY_FUSION3
+	bool "Sony Mobile Gaga Kddi"
+	help
+	  Support for the Sony Mobile Gaga kddi device.
+
 config MACH_SONY_YUGA
 	depends on MACH_SONY_FUSION3
 	bool "Sony Mobile Yuga"
 	help
 	  Support for the Sony Mobile Yuga device.
+
+config MACH_SONY_YUGA_DCM
+	depends on MACH_SONY_FUSION3
+	bool "Sony Mobile Yuga DCM"
+	help
+	  Support for the Sony Mobile Yuga Docomo device.
 
 config MACH_SONY_ODIN
 	depends on MACH_SONY_FUSION3
@@ -941,11 +964,29 @@ config MACH_SONY_POLLUX
 	help
 	  Support for the Sony Mobile Pollux device.
 
+config MACH_SONY_POLLUX_CDB
+	depends on ARCH_APQ8064
+	bool "Sony Mobile POLLUX CDB"
+	help
+	  Support for the Sony Mobile Pollux CDB device.
+
+config MACH_SONY_POLLUX_WINDY_CDB
+	depends on ARCH_APQ8064
+	bool "Sony Mobile Pollux Windy CDB"
+	help
+	  Support for the Sony Mobile Pollux Windy CDB device.
+
 config MACH_SONY_POLLUX_WINDY
 	depends on ARCH_APQ8064
 	bool "Sony Mobile Pollux Windy"
 	help
 	  Support for the Sony Mobile Pollux Windy device.
+
+config MACH_SONY_POLLUX_DCM
+	depends on ARCH_APQ8064
+	bool "Sony Mobile POLLUX DCM"
+	help
+	  Support for the Sony Mobile Pollux Docomo device.
 
 config MACH_FSM9XXX_SURF
 	depends on ARCH_FSM9XXX
@@ -962,6 +1003,7 @@ config MACH_MSM_DUMMY
 
 endmenu
 
+source "arch/arm/mach-msm/lge/Kconfig"
 
 config MSM_STACKED_MEMORY
 	bool "Stacked Memory"
@@ -1340,20 +1382,6 @@ config MSM_PCIE
 	  Enables the PCIe functionality by configures PCIe core on
 	  MSM chipset and by enabling the ARM PCI framework extension.
 
-config MSM_RPC_SDIO_XPRT
-	depends on MSM_SDIO_AL
-	default y
-	bool "MSM SDIO XPRT Layer"
-	help
-	  SDIO Transport Layer for RPC Rouer
-
-config MSM_RPC_SDIO_DEBUG
-	depends on MSM_RPC_SDIO_XPRT
-	default y
-	bool "MSM SDIO XPRT debug support"
-	help
-	  Support for debugging SDIO XPRT
-
 config MSM_SMD_DEBUG
 	depends on MSM_SMD
 	default y
@@ -1361,21 +1389,6 @@ config MSM_SMD_DEBUG
 	help
 	  Support for debugging the SMD for communication
 	  between the ARM9 and ARM11
-
-config MSM_SDIO_AL
-	depends on ((ARCH_MSM7X30 || MACH_MSM8X60_FUSN_FFA || MACH_TYPE_MSM8X60_FUSION) && HAS_WAKELOCK)
-	default y
-	tristate "SDIO-Abstraction-Layer"
-	help
-	  Support MSM<->MDM Communication over SDIO bus.
-	  MDM SDIO-Client should have pipes support.
-
-config MSM_SDIO_DMUX
-	bool "SDIO Data Mux Driver"
-	depends on MSM_SDIO_AL
-	default n
-	help
-	  Support Muxed Data Channels over SDIO interface.
 
 config MSM_BAM_DMUX
 	bool "BAM Data Mux Driver"
@@ -1436,16 +1449,6 @@ config MSM_SMD_NMEA
 
 	  If in doubt, say yes.
 
-config MSM_SDIO_TTY
-	bool "SDIO TTY Driver"
-	depends on MSM_SDIO_AL
-	default n
-	help
-	  Provides a TTY driver SDIO TTY
-	  This driver can be used by user space
-	  applications for passing data through the
-	  SDIO interface.
-
 config MSM_HSIC_TTY
 	bool "HSIC TTY Driver"
 	default n
@@ -1482,13 +1485,6 @@ config MSM_SMD_PKT
 
 	  If in doubt, say yes.
 
-config MSM_SDIO_CMUX
-	bool "SDIO CMUX Driver"
-	depends on MSM_SDIO_AL
-	default n
-	help
-	  Provides a Muxed port interface over SDIO QMI
-
 config MSM_DSPS
 	bool "Sensors DSPS driver"
 	depends on (MSM_PIL && (ARCH_MSM8X60 || ARCH_MSM8960))
@@ -1500,13 +1496,6 @@ config MSM_DSPS
 	  themself.
 	  The number of clocks and their name may vary between targets.
 	  It also triggers the PIL to load the DSPS firmware.
-
-config MSM_SDIO_CTL
-	bool "SDIO CTL Driver"
-	depends on MSM_SDIO_CMUX
-	default n
-	help
-	  Provides a binary SDIO control port interface.
 
 config MSM_ONCRPCROUTER
 	depends on MSM_SMD
@@ -1635,15 +1624,6 @@ config MSM_RMT_STORAGE_CLIENT_STATS
 	  Collects performance statistics and shows this information
 	  through a debugfs file rmt_storage_stats.
 
-config MSM_SDIO_SMEM
-        depends on MSM_SDIO_AL
-        default n
-        bool "SDIO SMEM for remote storage"
-        help
-          Copies data from remote MDM9K memory to local MSM8x60
-	  memory. Used by remote storage client to shadow
-	  MDM9K filesystem.
-
 config MSM_DALRPC
 	bool "DAL RPC support"
 	default n
@@ -1669,32 +1649,18 @@ config MSM_CPU_FREQ_SET_MIN_MAX
 config MSM_CPU_FREQ_MAX
 	int "Max CPU Frequency"
 	depends on MSM_CPU_FREQ_SET_MIN_MAX
-	default 1512000
+	default 384000
 
 config MSM_CPU_FREQ_MIN
 	int "Min CPU Frequency"
 	depends on MSM_CPU_FREQ_SET_MIN_MAX
-	default 384000
-
-config MSM_MPDEC
-	bool "Enable kernel based mpdecision"
-	depends on MSM_SMP
-	default y
-	help
-	  This enables kernel based multi core control.
-	  (up/down hotplug based on load)
+	default 245760
 
 config CPU_VOLTAGE_TABLE
 	bool "Enable CPU Voltage Table via sysfs for adjustements"
 	default n
 	help
 	  Krait User Votlage Control
-
-config GPU_OVERCLOCK
-	bool "Enable GPU Overclocking option"
-	default n
-	help
-	  Adreno3xx overclocking up to 627 MHz
 
 endif # CPU_FREQ_MSM
 
@@ -2302,6 +2268,12 @@ config MSM_RUN_QUEUE_STATS
 config MSM_STANDALONE_POWER_COLLAPSE
        bool "Enable standalone power collapse"
        default n
+
+config MSM_GSBI7_UART
+	bool "Enable GSBI7 UART device"
+	default n
+	help
+	  This enables GSBI7 configured into UART.
 
 config MSM_GSBI9_UART
 	bool "Enable GSBI9 UART device"
@@ -2916,30 +2888,4 @@ config MSM_MODEM_SUBSYSTEM_RESTART_MONITOR
 	  This option enables a module which can notify user-space
 	  applications of modem subsystem power up/down event via uevent.
 
-config FORCE_FAST_CHARGE
-	bool "Force AC charge mode at will"
-	default y
-	help
-		A simple sysfs interface to force adapters that
-		are detected as USB to charge as AC.
-
-config UPDATE_LCDC_LUT
-        bool "Set initial Qualcomm LCDC lut"
-        default y
-        help
-          Set initial Qualcomm LCDC Look Up Table.
- 
-
-config LCD_KCAL
-        tristate "MSM generic LCDC Calibration"
-        default y
-        help
-          Enable MSM generic LCDC temperature Calibration.
-
-config HAS_MACH_MEMUTILS
-	default y
-	bool "Motorola MSM memcpy enhancements"
-	help
-	Faster memcpy performance for Krait
-        
 endif
