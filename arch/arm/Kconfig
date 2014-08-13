@@ -1659,6 +1659,14 @@ config ARM_CPU_TOPOLOGY
 	  affinity between processors which is then used to describe the cpu
 	  topology of an ARM System.
 
+config ASMP
+	bool "Multi-core automatic hotplug support"
+	depends on SMP
+	default y
+	help
+	  Automatically hotplugs the multiple cpu cores on and off
+	  based on cpu load and suspend state
+
 config SCHED_MC
 	bool "Multi-core scheduler support"
 	depends on ARM_CPU_TOPOLOGY
