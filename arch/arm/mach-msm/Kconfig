@@ -1647,22 +1647,22 @@ config MSM_CPU_FREQ_SET_MIN_MAX
 config MSM_CPU_FREQ_MAX
 	int "Max CPU Frequency"
 	depends on MSM_CPU_FREQ_SET_MIN_MAX
-	default 384000
+	default 1512000
 
 config MSM_CPU_FREQ_MIN
 	int "Min CPU Frequency"
 	depends on MSM_CPU_FREQ_SET_MIN_MAX
-	default 245760
+	default 192000
 
 config CPU_VOLTAGE_TABLE
 	bool "Enable CPU Voltage Table via sysfs for adjustements"
-	default n
+	default y
 	help
 	  Krait User Votlage Control
 
 config GPU_OVERCLOCK
 	bool "Enable GPU Overclocking option"
-	default n
+	default y
 	help
 	  Adreno3xx overclocking up to 533 MHz
 
@@ -2883,5 +2883,11 @@ config MSM_MODEM_SUBSYSTEM_RESTART_MONITOR
 	help
 	  This option enables a module which can notify user-space
 	  applications of modem subsystem power up/down event via uevent.
+
+config HAS_MACH_MEMUTILS
+	default y
+	bool "Motorola MSM memcpy enhancements"
+	help
+	Faster memcpy performance for Krait
 
 endif
