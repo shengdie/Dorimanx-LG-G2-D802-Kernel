@@ -1,12 +1,9 @@
 VERSION = 3
 PATCHLEVEL = 4
-<<<<<<< HEAD
 SUBLEVEL = 103
 EXTRAVERSION =
-=======
 SUBLEVEL = 0
 EXTRAVERSION = lightning-kernel-cm11-version-9
->>>>>>> 74d28af... fastcharge
 NAME = Saber-toothed Squirrel
 
 # *DOCUMENTATION*

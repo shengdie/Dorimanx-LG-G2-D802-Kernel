@@ -1661,7 +1661,7 @@ config ARM_CPU_TOPOLOGY
 config ASMP
 	bool "Multi-core automatic hotplug support"
 	depends on SMP
-	default y
+	default n
 	help
 	  Automatically hotplugs the multiple cpu cores on and off
 	  based on cpu load and suspend state
@@ -2481,7 +2481,7 @@ config NEON
 
 config KERNEL_MODE_NEON
 	bool "Support for NEON in kernel mode"
-	default n
+	default y
 	depends on NEON
 	help
 	  Say Y to include support for NEON in kernel mode.

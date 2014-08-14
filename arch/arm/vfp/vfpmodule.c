@@ -635,8 +635,6 @@ int vfp_restore_user_hwstate(struct user_vfp __user *ufp,
 	return err ? -EFAULT : 0;
 }
 
-<<<<<<< HEAD
-=======
 void vfp_kmode_exception(void)
 {
 	/*
@@ -703,7 +701,6 @@ EXPORT_SYMBOL(kernel_neon_end);
 
 #endif /* CONFIG_KERNEL_MODE_NEON */
 
->>>>>>> 82326df... ARM: add support for kernel mode NEON
 /*
  * VFP hardware can lose all context when a CPU goes offline.
  * As we will be running in SMP mode with CPU hotplug, we will save the
