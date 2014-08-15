@@ -27,7 +27,6 @@
 #include <linux/msm_mdp.h>
 #include <linux/ktime.h>
 #include <linux/wakelock.h>
-#include <linux/time.h>
 #include <asm/system.h>
 #include <asm/mach-types.h>
 #include <mach/hardware.h>
