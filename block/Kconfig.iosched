@@ -32,8 +32,6 @@ config IOSCHED_DEADLINE
 	  a new point in the service tree and doing a batch of IO from there
 	  in case of expiry.
 
-<<<<<<< HEAD
-=======
 config IOSCHED_ROW
 	tristate "ROW I/O scheduler"
 	default y
@@ -59,7 +57,6 @@ config IOSCHED_ZEN
   	  FCFS, dispatches are back-inserted, deadlines ensure fairness.
   	  Should work best with devices where there is no travel delay.
 
->>>>>>> aea2bab... Add a bunch of governors and schedulers (from uber n5)
 config IOSCHED_CFQ
 	tristate "CFQ I/O scheduler"
 	# If BLK_CGROUP is a module, CFQ has to be built as module.

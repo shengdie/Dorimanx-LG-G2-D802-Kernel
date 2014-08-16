@@ -151,11 +151,8 @@ enum rq_flag_bits {
 	__REQ_IO_STAT,		/* account I/O stat */
 	__REQ_MIXED_MERGE,	/* merge of different types, fail separately */
 	__REQ_SANITIZE,		/* sanitize */
-<<<<<<< HEAD
-=======
 	__REQ_URGENT,		/* urgent request */
 	__REQ_PM,		/* runtime pm request */
->>>>>>> aea2bab... Add a bunch of governors and schedulers (from uber n5)
 	__REQ_NR_BITS,		/* stops here */
 };
 
