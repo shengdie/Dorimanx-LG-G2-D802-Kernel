@@ -3,7 +3,7 @@
  *
  * automatically hotplug/unplug multiple cpu cores
  * based on cpu load and suspend state
- * 
+ *
  * based on the msm_mpdecision code by
  * Copyright (c) 2012-2013, Dennis Rassmann <showp1984@gmail.com>
  *
@@ -11,17 +11,17 @@
  * rewrite to simplify and optimize, Jul. 2013, http://goo.gl/cdGw6x
  * optimize more, generalize for n cores, Sep. 2013, http://goo.gl/448qBz
  * generalize for all arch, rename as autosmp, Dec. 2013, http://goo.gl/x5oyhy
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version. For more details, see the GNU 
- * General Public License included with the Linux kernel or available 
+ * (at your option) any later version. For more details, see the GNU
+ * General Public License included with the Linux kernel or available
  * at www.gnu.org/licenses
  */
 
 #include <linux/moduleparam.h>
-#include <linux/earlysuspend.h>
+#include <linux/powersuspend.h>
 #include <linux/cpufreq.h>
 #include <linux/workqueue.h>
 #include <linux/cpu.h>
@@ -55,14 +55,14 @@ static struct asmp_param_struct {
 	.scroff_single_core = true,
 	.max_cpus = CONFIG_NR_CPUS,
 	.min_cpus = 1,
-	.cpufreq_up = 1000000, //kHz
-	.cpufreq_down = 600000, //kHz
+	.cpufreq_up = 1200000, //kHz
+	.cpufreq_down = 1000000, //kHz
 	.cycle_up = 1,
 	.cycle_down = 3,
 };
 
 static unsigned int cycle = 0;
-static int enabled = 1;
+static int enabled __read_mostly = 1;
 
 static void __cpuinit asmp_work_fn(struct work_struct *work) {
 	unsigned int cpu = 0, slow_cpu = 0;
@@ -71,6 +71,7 @@ static void __cpuinit asmp_work_fn(struct work_struct *work) {
 
 	cycle++;
 	/* find max and min cpu freq to estimate load */
+	get_online_cpus();
 	nr_cpu_online = num_online_cpus();
 	cpu0_rate = cpufreq_quick_get(cpu);
 	fast_rate = cpu0_rate;
@@ -80,15 +81,16 @@ static void __cpuinit asmp_work_fn(struct work_struct *work) {
 			if (rate <= slow_rate) {
 				slow_cpu = cpu;
 				slow_rate = rate;
-			} else if (rate > fast_rate) 
+			} else if (rate > fast_rate)
 				fast_rate = rate;
-		} 
-	if (cpu0_rate < slow_rate) 
+		}
+	put_online_cpus();
+	if (cpu0_rate < slow_rate)
 		slow_rate = cpu0_rate;
 
 	/* hotplug one core if all online cores are over up freq limit */
 	if (slow_rate > asmp_param.cpufreq_up) {
-		if ((nr_cpu_online < asmp_param.max_cpus) && 
+		if ((nr_cpu_online < asmp_param.max_cpus) &&
 		    (cycle >= asmp_param.cycle_up)) {
 			cpu = cpumask_next_zero(0, cpu_online_mask);
 			cpu_up(cpu);
@@ -100,7 +102,7 @@ static void __cpuinit asmp_work_fn(struct work_struct *work) {
 	/* unplug slowest core if all online cores are under down freq limit */
 	} else if (slow_cpu && (fast_rate < asmp_param.cpufreq_down)) {
 		if ((nr_cpu_online > asmp_param.min_cpus) &&
-		    (cycle >= asmp_param.cycle_down)) { // but not so soon 
+		    (cycle >= asmp_param.cycle_down)) { // but not so soon
 			cpu_down(slow_cpu);
 			cycle = 0;
 #if DEBUG
@@ -114,13 +116,13 @@ static void __cpuinit asmp_work_fn(struct work_struct *work) {
 			   msecs_to_jiffies(asmp_param.delay));
 }
 
-static void asmp_early_suspend(struct early_suspend *h) {
+static void asmp_power_suspend(struct power_suspend *h) {
 	int cpu;
 
 	/* unplug online cpu cores */
 	if (asmp_param.scroff_single_core)
 		for (cpu = 1; cpu < nr_cpu_ids; cpu++)
-			if (cpu_online(cpu)) 
+			if (cpu_online(cpu))
 				cpu_down(cpu);
 
 	/* suspend main work thread */
@@ -130,26 +132,25 @@ static void asmp_early_suspend(struct early_suspend *h) {
 	pr_info(ASMP_TAG"suspended\n");
 }
 
-static void __cpuinit asmp_late_resume(struct early_suspend *h) {
+static void __cpuinit asmp_late_resume(struct power_suspend *h) {
 	int cpu;
 
 	/* hotplug offline cpu cores */
 	if (asmp_param.scroff_single_core)
 		for (cpu = 1; cpu < nr_cpu_ids; cpu++)
-			if (!cpu_online(cpu)) 
+			if (!cpu_online(cpu))
 				cpu_up(cpu);
 
 	/* resume main work thread */
 	if (enabled)
-		queue_delayed_work(asmp_workq, &asmp_work, 
+		queue_delayed_work(asmp_workq, &asmp_work,
 				msecs_to_jiffies(asmp_param.delay));
 
 	pr_info(ASMP_TAG"resumed\n");
 }
 
-static struct early_suspend __refdata asmp_early_suspend_handler = {
-	.level = EARLY_SUSPEND_LEVEL_BLANK_SCREEN,
-	.suspend = asmp_early_suspend,
+static struct power_suspend __refdata asmp_power_suspend_handler = {
+	.suspend = asmp_power_suspend,
 	.resume = asmp_late_resume,
 };
 
@@ -165,7 +166,7 @@ static int __cpuinit set_enabled(const char *val, const struct kernel_param *kp)
 	} else {
 		cancel_delayed_work_sync(&asmp_work);
 		for (cpu = 1; cpu < nr_cpu_ids; cpu++)
-			if (!cpu_online(cpu)) 
+			if (!cpu_online(cpu))
 				cpu_up(cpu);
 		pr_info(ASMP_TAG"disabled\n");
 	}
@@ -245,13 +246,13 @@ static struct attribute_group asmp_attr_group = {
 	.name = "conf",
 };
 #if DEBUG
-static ssize_t show_times_hotplugged(struct kobject *a, 
+static ssize_t show_times_hotplugged(struct kobject *a,
 					struct attribute *b, char *buf) {
 	ssize_t len = 0;
 	int cpu;
 
 	for_each_possible_cpu(cpu) {
-		len += sprintf(buf + len, "%i %llu\n", cpu, 
+		len += sprintf(buf + len, "%i %llu\n", cpu,
 			per_cpu(asmp_cpudata, cpu).times_hotplugged);
 	}
 	return len;
@@ -284,7 +285,7 @@ static int __init asmp_init(void) {
 		queue_delayed_work(asmp_workq, &asmp_work,
 				   msecs_to_jiffies(ASMP_STARTDELAY));
 
-	register_early_suspend(&asmp_early_suspend_handler);
+	register_power_suspend(&asmp_power_suspend_handler);
 
 	asmp_kobject = kobject_create_and_add("autosmp", kernel_kobj);
 	if (asmp_kobject) {

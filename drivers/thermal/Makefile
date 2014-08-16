@@ -8,11 +8,7 @@ obj-$(CONFIG_THERMAL_TSENS)	+= msm_tsens.o
 obj-$(CONFIG_THERMAL_TSENS8960) += msm8960_tsens.o
 obj-$(CONFIG_THERMAL_PM8XXX)	+= pm8xxx-tm.o
 ifdef CONFIG_INTELLI_THERMAL
-<<<<<<< HEAD
 obj-$(CONFIG_INTELLI_THERMAL)	+= intelli/
-=======
-obj-$(CONFIG_INTELLI_THERMAL)  += intelli/
->>>>>>> a61ed57... many features
 else
 obj-$(CONFIG_THERMAL_MONITOR)	+= msm_thermal.o
 endif
