@@ -3031,6 +3031,15 @@ struct platform_device sglte2_qsc_8064_device = {
 	.resource	= sglte2_qsc_resources,
 };
 
+static struct msm_dcvs_freq_entry apq8064_freq[] = {
+	{ 384000, 166981,  345600},
+	{ 702000, 213049,  632502},
+	{1026000, 285712,  925613},
+	{1242000, 383945, 1176550},
+	{1458000, 419729, 1465478},
+	{1512000, 434116, 1546674},
+};
+
 static struct msm_dcvs_sync_rule apq8064_dcvs_sync_rules[] = {
 	{1026000,	400000},
 	{384000,	200000},
@@ -3086,15 +3095,23 @@ static struct msm_dcvs_core_info apq8064_core_info = {
 	},
 	.power_param		= {
 		.current_temp	= 25,
-		.num_freq	= 0, /* set at runtime */
+		.num_freq	= ARRAY_SIZE(apq8064_freq),
 	}
 };
 
-#define APQ8064_LPM_LATENCY  1000 /* >100 usec for WFI */
+static int apq8064_LPM_latency = 1000; /* >100 usec for WFI */
+
+struct platform_device apq8064_cpu_idle_device = {
+	.name   = "msm_cpu_idle",
+	.id     = -1,
+	.dev = {
+		.platform_data = &apq8064_LPM_latency,
+	},
+};
 
 static struct msm_gov_platform_data gov_platform_data = {
 	.info = &apq8064_core_info,
-	.latency = APQ8064_LPM_LATENCY,
+	.latency = 1000, /* equal to apq8064_LPM_latency */
 };
 
 struct platform_device apq8064_msm_gov_device = {
