@@ -643,7 +643,6 @@ CONFIG_SECURITY_SELINUX_AVC_EXTRA_INFO=y
 CONFIG_CRYPTO_NULL=y
 CONFIG_CRYPTO_XCBC=y
 CONFIG_CRYPTO_TWOFISH=y
-<<<<<<< HEAD:arch/arm/configs/cm_fusion3_yuga_defconfig
 CONFIG_CRYPTO_AES_ARM=y
 CONFIG_CRYPTO_SHA1_ARM=y
 CONFIG_ALLOW_CPU_ALIGNMENT=y
@@ -654,11 +653,3 @@ CONFIG_KERNEL_LZ4=y
 CONFIG_RD_LZ4=y
 CONFIG_LZ4_DECOMPRESS=y
 CONFIG_DECOMPRESS_LZ4=y
-=======
-# CONFIG_CRYPTO_ANSI_CPRNG is not set
-# CONFIG_CRYPTO_HW is not set
-
-CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE=y
-CONFIG_UPDATE_LCDC_LUT=y
-CONFIG_LCD_KCAL=y
->>>>>>> 560bde1... added initial patches for GammaControl (currently not working) [thanks to @nikhiljan93]:arch/arm/configs/custom_fusion3_yuga_defconfig
