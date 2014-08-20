@@ -2898,27 +2898,15 @@ config MSM_MODEM_SUBSYSTEM_RESTART_MONITOR
 	  This option enables a module which can notify user-space
 	  applications of modem subsystem power up/down event via uevent.
 
-<<<<<<< HEAD
-config UPDATE_LCDC_LUT
-         bool "Set initial Qualcomm LCDC lut"
-=======
-config FORCE_FAST_CHARGE
-	bool "Force AC charge mode at will"
-	default y
-	help
-		A simple sysfs interface to force adapters that
-		are detected as USB to charge as AC.
-
 config UPDATE_LCDC_LUT_STANDALONE
          bool "Set initial Qualcomm LCDC lut MSM"
->>>>>>> 782fa4c... some more fixes for gamma control
-         default y
+         default n
          help
            Set initial Qualcomm LCDC Look Up Table.
  
 config LCD_KCAL_STANDALONE
          tristate "MSM generic LCDC Calibration"
-        default m
+        default n
          help
           Enable MSM generic LCDC temperature Calibration.
 

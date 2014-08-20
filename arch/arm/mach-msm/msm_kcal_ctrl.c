@@ -577,7 +577,7 @@ int __init kcal_ctrl_init(void)
 	platform_add_devices(msm_panel_devices,
 		ARRAY_SIZE(msm_panel_devices));
 
-	register_early_suspend(&msm_kcal_early_suspend_struct_driver);
+	register_power_suspend(&msm_kcal_power_suspend_struct_driver);
 
 	//pr_info("generic kcal ctrl initialized\n");
 	//pr_info("generic kcal ctrl version %d.%d\n",
