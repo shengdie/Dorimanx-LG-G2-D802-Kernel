@@ -46,15 +46,12 @@
 
 #define SECCLKAGD		BIT(4)
 
-<<<<<<< HEAD
-=======
 #ifdef CONFIG_OC_ULTIMATE
-#define FREQ_TABLE_SIZE		37
+#define FREQ_TABLE_SIZE		38
 #else
 #define FREQ_TABLE_SIZE		35
 #endif
 
->>>>>>> 60617ca... Overclocking: cut off normal max OC @1.84 GHz and make 1.944 GHz as ultimate
 static DEFINE_MUTEX(driver_lock);
 static DEFINE_SPINLOCK(l2_lock);
 
