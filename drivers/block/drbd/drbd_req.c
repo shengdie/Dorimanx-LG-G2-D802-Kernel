@@ -138,6 +138,7 @@ static void _about_to_complete_local_write(struct drbd_conf *mdev,
 	const unsigned long s = req->rq_state;
 	struct drbd_request *i;
 	struct drbd_epoch_entry *e;
+	struct hlist_node *n;
 	struct hlist_head *slot;
 
 	/* Before we can signal completion to the upper layers,
@@ -163,7 +164,7 @@ static void _about_to_complete_local_write(struct drbd_conf *mdev,
 		 * they must have been failed on the spot */
 #define OVERLAPS overlaps(sector, size, i->sector, i->size)
 		slot = tl_hash_slot(mdev, sector);
-		hlist_for_each_entry(i, slot, collision) {
+		hlist_for_each_entry(i, n, slot, collision) {
 			if (OVERLAPS) {
 				dev_alert(DEV, "LOGIC BUG: completed: %p %llus +%u; "
 				      "other: %p %llus +%u\n",
@@ -187,7 +188,7 @@ static void _about_to_complete_local_write(struct drbd_conf *mdev,
 #undef OVERLAPS
 #define OVERLAPS overlaps(sector, size, e->sector, e->size)
 		slot = ee_hash_slot(mdev, req->sector);
-		hlist_for_each_entry(e, slot, collision) {
+		hlist_for_each_entry(e, n, slot, collision) {
 			if (OVERLAPS) {
 				wake_up(&mdev->misc_wait);
 				break;
@@ -326,6 +327,7 @@ static int _req_conflicts(struct drbd_request *req)
 	const int size = req->size;
 	struct drbd_request *i;
 	struct drbd_epoch_entry *e;
+	struct hlist_node *n;
 	struct hlist_head *slot;
 
 	D_ASSERT(hlist_unhashed(&req->collision));
@@ -340,7 +342,7 @@ static int _req_conflicts(struct drbd_request *req)
 
 #define OVERLAPS overlaps(i->sector, i->size, sector, size)
 	slot = tl_hash_slot(mdev, sector);
-	hlist_for_each_entry(i, slot, collision) {
+	hlist_for_each_entry(i, n, slot, collision) {
 		if (OVERLAPS) {
 			dev_alert(DEV, "%s[%u] Concurrent local write detected! "
 			      "[DISCARD L] new: %llus +%u; "
@@ -358,7 +360,7 @@ static int _req_conflicts(struct drbd_request *req)
 #undef OVERLAPS
 #define OVERLAPS overlaps(e->sector, e->size, sector, size)
 		slot = ee_hash_slot(mdev, sector);
-		hlist_for_each_entry(e, slot, collision) {
+		hlist_for_each_entry(e, n, slot, collision) {
 			if (OVERLAPS) {
 				dev_alert(DEV, "%s[%u] Concurrent remote write detected!"
 				      " [DISCARD L] new: %llus +%u; "
