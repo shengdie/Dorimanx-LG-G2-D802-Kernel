@@ -772,12 +772,11 @@ static struct atm_vcc *find_vcc(struct atm_dev *dev, short vpi, int vci)
 {
 	struct hlist_head *head;
 	struct atm_vcc *vcc = NULL;
-	struct hlist_node *node;
 	struct sock *s;
 
 	read_lock(&vcc_sklist_lock);
 	head = &vcc_hash[vci & (VCC_HTABLE_SIZE -1)];
-	sk_for_each(s, node, head) {
+	sk_for_each(s, head) {
 		vcc = atm_sk(s);
 		if (vcc->dev == dev && vcc->vci == vci &&
 		    vcc->vpi == vpi && vcc->qos.rxtp.traffic_class != ATM_NONE &&
@@ -794,7 +793,6 @@ static int list_vccs(int vci)
 {
 	struct hlist_head *head;
 	struct atm_vcc *vcc;
-	struct hlist_node *node;
 	struct sock *s;
 	int num_found = 0;
 	int i;
@@ -802,7 +800,7 @@ static int list_vccs(int vci)
 	read_lock(&vcc_sklist_lock);
 	if (vci != 0){
 		head = &vcc_hash[vci & (VCC_HTABLE_SIZE -1)];
-		sk_for_each(s, node, head) {
+		sk_for_each(s, head) {
 			num_found ++;
 			vcc = atm_sk(s);
 			printk(KERN_DEBUG "Device: %d Vpi: %d Vci: %d\n",
@@ -813,7 +811,7 @@ static int list_vccs(int vci)
 	} else {
 		for(i = 0; i < VCC_HTABLE_SIZE; i++){
 			head = &vcc_hash[i];
-			sk_for_each(s, node, head) {
+			sk_for_each(s, head) {
 				num_found ++;
 				vcc = atm_sk(s);
 				printk(KERN_DEBUG "Device: %d Vpi: %d Vci: %d\n",
