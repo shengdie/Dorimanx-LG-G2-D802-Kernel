@@ -2265,6 +2265,7 @@ static void *fib_trie_seq_next(struct seq_file *seq, void *v, loff_t *pos)
 	struct fib_trie_iter *iter = seq->private;
 	struct net *net = seq_file_net(seq);
 	struct fib_table *tb = iter->tb;
+	struct hlist_node *tb_node;
 	unsigned int h;
 	struct rt_trie_node *n;
 

@@ -259,9 +259,8 @@ static int check_overlap(struct hlist_head *ptype,
 {
 	struct msm_pmem_region *region;
 	struct msm_pmem_region t = { .paddr = paddr, .len = len };
-	struct hlist_node *node;
 
-	hlist_for_each_entry(region, node, ptype, list) {
+	hlist_for_each_entry(region, ptype, list) {
 		if (CONTAINS(region, &t, paddr) ||
 				CONTAINS(&t, region, paddr) ||
 				OVERLAPS(region, &t, paddr)) {
@@ -380,14 +379,14 @@ static uint8_t msm_pmem_region_lookup(struct hlist_head *ptype,
 {
 	struct msm_pmem_region *region;
 	struct msm_pmem_region *regptr;
-	struct hlist_node *node, *n;
+	struct hlist_node *n;
 	unsigned long flags = 0;
 
 	uint8_t rc = 0;
 
 	regptr = reg;
 	spin_lock_irqsave(pmem_spinlock, flags);
-	hlist_for_each_entry_safe(region, node, n, ptype, list) {
+	hlist_for_each_entry_safe(region, n, ptype, list) {
 		if (region->info.type == pmem_type && region->info.active) {
 			*regptr = *region;
 			rc += 1;
@@ -400,7 +399,7 @@ static uint8_t msm_pmem_region_lookup(struct hlist_head *ptype,
 	/* After lookup failure, dump all the list entries...*/
 	if (rc == 0) {
 		pr_err("%s: pmem_type = %d\n", __func__, pmem_type);
-		hlist_for_each_entry_safe(region, node, n, ptype, list) {
+		hlist_for_each_entry_safe(region, n, ptype, list) {
 			pr_err("listed region->info.type = %d, active = %d",
 				region->info.type, region->info.active);
 		}
@@ -417,12 +416,12 @@ static uint8_t msm_pmem_region_lookup_2(struct hlist_head *ptype,
 {
 	struct msm_pmem_region *region;
 	struct msm_pmem_region *regptr;
-	struct hlist_node *node, *n;
+	struct hlist_node *n;
 	uint8_t rc = 0;
 	unsigned long flags = 0;
 	regptr = reg;
 	spin_lock_irqsave(pmem_spinlock, flags);
-	hlist_for_each_entry_safe(region, node, n, ptype, list) {
+	hlist_for_each_entry_safe(region, n, ptype, list) {
 		CDBG("%s:info.type=%d, pmem_type = %d,"
 						"info.active = %d\n",
 		__func__, region->info.type, pmem_type, region->info.active);
@@ -452,11 +451,11 @@ static int msm_pmem_frame_ptov_lookup(struct msm_sync *sync,
 		int clear_active)
 {
 	struct msm_pmem_region *region;
-	struct hlist_node *node, *n;
+	struct hlist_node *n;
 	unsigned long flags = 0;
 
 	spin_lock_irqsave(&sync->pmem_frame_spinlock, flags);
-	hlist_for_each_entry_safe(region, node, n, &sync->pmem_frames, list) {
+	hlist_for_each_entry_safe(region, n, &sync->pmem_frames, list) {
 		if (p0addr == (region->paddr + region->info.planar0_off) &&
 			p1addr == (region->paddr + region->info.planar1_off) &&
 			p2addr == (region->paddr + region->info.planar2_off) &&
@@ -475,7 +474,7 @@ static int msm_pmem_frame_ptov_lookup(struct msm_sync *sync,
 	/* After lookup failure, dump all the list entries... */
 	pr_err("%s, for plane0 addr = 0x%lx, plane1 addr = 0x%lx  plane2 addr = 0x%lx\n",
 			__func__, p0addr, p1addr, p2addr);
-	hlist_for_each_entry_safe(region, node, n, &sync->pmem_frames, list) {
+	hlist_for_each_entry_safe(region, n, &sync->pmem_frames, list) {
 		pr_err("listed p0addr 0x%lx, p1addr 0x%lx, p2addr 0x%lx, active = %d",
 				(region->paddr + region->info.planar0_off),
 				(region->paddr + region->info.planar1_off),
@@ -493,11 +492,11 @@ static int msm_pmem_frame_ptov_lookup2(struct msm_sync *sync,
 		int clear_active)
 {
 	struct msm_pmem_region *region;
-	struct hlist_node *node, *n;
+	struct hlist_node *n;
 	unsigned long flags = 0;
 
 	spin_lock_irqsave(&sync->pmem_frame_spinlock, flags);
-	hlist_for_each_entry_safe(region, node, n, &sync->pmem_frames, list) {
+	hlist_for_each_entry_safe(region, n, &sync->pmem_frames, list) {
 		if (p0_phy == (region->paddr + region->info.planar0_off) &&
 				region->info.active) {
 			/* offset since we could pass vaddr inside
@@ -520,11 +519,11 @@ static unsigned long msm_pmem_stats_ptov_lookup(struct msm_sync *sync,
 		unsigned long addr, int *fd)
 {
 	struct msm_pmem_region *region;
-	struct hlist_node *node, *n;
+	struct hlist_node *n;
 	unsigned long flags = 0;
 
 	spin_lock_irqsave(&sync->pmem_stats_spinlock, flags);
-	hlist_for_each_entry_safe(region, node, n, &sync->pmem_stats, list) {
+	hlist_for_each_entry_safe(region, n, &sync->pmem_stats, list) {
 		if (addr == region->paddr && region->info.active) {
 			/* offset since we could pass vaddr inside a
 			 * registered pmem buffer */
@@ -538,7 +537,7 @@ static unsigned long msm_pmem_stats_ptov_lookup(struct msm_sync *sync,
 	/* After lookup failure, dump all the list entries... */
 	pr_err("%s, lookup failure, for paddr 0x%lx\n",
 			__func__, addr);
-	hlist_for_each_entry_safe(region, node, n, &sync->pmem_stats, list) {
+	hlist_for_each_entry_safe(region, n, &sync->pmem_stats, list) {
 		pr_err("listed paddr 0x%lx, active = %d",
 				region->paddr,
 				region->info.active);
@@ -553,12 +552,12 @@ static unsigned long msm_pmem_frame_vtop_lookup(struct msm_sync *sync,
 		uint32_t p2_off, int fd, int change_flag)
 {
 	struct msm_pmem_region *region;
-	struct hlist_node *node, *n;
+	struct hlist_node *n;
 	unsigned long flags = 0;
 
 	spin_lock_irqsave(&sync->pmem_frame_spinlock, flags);
 	hlist_for_each_entry_safe(region,
-		node, n, &sync->pmem_frames, list) {
+		n, &sync->pmem_frames, list) {
 		if (((unsigned long)(region->info.vaddr) == buffer) &&
 				(region->info.planar0_off == p0_off) &&
 				(region->info.planar1_off == p1_off) &&
@@ -575,7 +574,7 @@ static unsigned long msm_pmem_frame_vtop_lookup(struct msm_sync *sync,
 	/* After lookup failure, dump all the list entries... */
 	pr_err("%s, failed for vaddr 0x%lx, p0_off %d p1_off %d\n",
 			__func__, buffer, p0_off, p1_off);
-	hlist_for_each_entry_safe(region, node, n, &sync->pmem_frames, list) {
+	hlist_for_each_entry_safe(region, n, &sync->pmem_frames, list) {
 		pr_err("%s, listed vaddr 0x%lx, r_p0 = 0x%x p0_off 0x%x"
 			"r_p1 = 0x%x, p1_off 0x%x, r_p2 = 0x%x, p2_off = 0x%x"
 			" active = %d\n", __func__, buffer,
@@ -596,11 +595,11 @@ static unsigned long msm_pmem_stats_vtop_lookup(
 		int fd)
 {
 	struct msm_pmem_region *region;
-	struct hlist_node *node, *n;
+	struct hlist_node *n;
 	unsigned long flags = 0;
 
 	spin_lock_irqsave(&sync->pmem_stats_spinlock, flags);
-	hlist_for_each_entry_safe(region, node, n, &sync->pmem_stats, list) {
+	hlist_for_each_entry_safe(region, n, &sync->pmem_stats, list) {
 		if (((unsigned long)(region->info.vaddr) == buffer) &&
 				(region->info.fd == fd) &&
 				region->info.active == 0) {
@@ -613,7 +612,7 @@ static unsigned long msm_pmem_stats_vtop_lookup(
 	/* After lookup failure, dump all the list entries... */
 	pr_err("%s,look up error for vaddr %ld\n",
 			__func__, buffer);
-	hlist_for_each_entry_safe(region, node, n, &sync->pmem_stats, list) {
+	hlist_for_each_entry_safe(region, n, &sync->pmem_stats, list) {
 		pr_err("listed vaddr 0x%p, active = %d",
 				region->info.vaddr,
 				region->info.active);
@@ -628,7 +627,7 @@ static int __msm_pmem_table_del(struct msm_sync *sync,
 {
 	int rc = 0;
 	struct msm_pmem_region *region;
-	struct hlist_node *node, *n;
+	struct hlist_node *n;
 	unsigned long flags = 0;
 
 	switch (pinfo->type) {
@@ -640,13 +639,13 @@ static int __msm_pmem_table_del(struct msm_sync *sync,
 	case MSM_PMEM_MAINIMG_VPE:
 	case MSM_PMEM_THUMBNAIL_VPE:
 		spin_lock_irqsave(&sync->pmem_frame_spinlock, flags);
-		hlist_for_each_entry_safe(region, node, n,
+		hlist_for_each_entry_safe(region, n,
 			&sync->pmem_frames, list) {
 
 			if (pinfo->type == region->info.type &&
 					pinfo->vaddr == region->info.vaddr &&
 					pinfo->fd == region->info.fd) {
-				hlist_del(node);
+				hlist_del(&region->list);
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 				ion_free(client_for_ion, region->handle);
 #else
@@ -663,14 +662,14 @@ static int __msm_pmem_table_del(struct msm_sync *sync,
 	case MSM_PMEM_VIDEO:
 	case MSM_PMEM_VIDEO_VPE:
 		spin_lock_irqsave(&sync->pmem_frame_spinlock, flags);
-		hlist_for_each_entry_safe(region, node, n,
+		hlist_for_each_entry_safe(region, n,
 			&sync->pmem_frames, list) {
 
 			if (((region->info.type == MSM_PMEM_VIDEO) ||
 				(region->info.type == MSM_PMEM_VIDEO_VPE)) &&
 				pinfo->vaddr == region->info.vaddr &&
 				pinfo->fd == region->info.fd) {
-				hlist_del(node);
+				hlist_del(&region->list);
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 				ion_free(client_for_ion, region->handle);
 #else
@@ -687,13 +686,13 @@ static int __msm_pmem_table_del(struct msm_sync *sync,
 	case MSM_PMEM_AEC_AWB:
 	case MSM_PMEM_AF:
 		spin_lock_irqsave(&sync->pmem_stats_spinlock, flags);
-		hlist_for_each_entry_safe(region, node, n,
+		hlist_for_each_entry_safe(region, n,
 			&sync->pmem_stats, list) {
 
 			if (pinfo->type == region->info.type &&
 					pinfo->vaddr == region->info.vaddr &&
 					pinfo->fd == region->info.fd) {
-				hlist_del(node);
+				hlist_del(&region->list);
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 				ion_free(client_for_ion, region->handle);
 #else
@@ -3037,7 +3036,6 @@ static long msm_ioctl_control(struct file *filep, unsigned int cmd,
 static int __msm_release(struct msm_sync *sync)
 {
 	struct msm_pmem_region *region;
-	struct hlist_node *hnode;
 	struct hlist_node *n;
 
 	mutex_lock(&sync->lock);
@@ -3065,9 +3063,9 @@ static int __msm_release(struct msm_sync *sync)
 		sync->cropinfo = NULL;
 		sync->croplen = 0;
 		CDBG("%s, free frame pmem region\n", __func__);
-		hlist_for_each_entry_safe(region, hnode, n,
+		hlist_for_each_entry_safe(region, n,
 				&sync->pmem_frames, list) {
-			hlist_del(hnode);
+			hlist_del(&region->list);
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 				ion_free(client_for_ion, region->handle);
 #else
@@ -3076,9 +3074,9 @@ static int __msm_release(struct msm_sync *sync)
 			kfree(region);
 		}
 		CDBG("%s, free stats pmem region\n", __func__);
-		hlist_for_each_entry_safe(region, hnode, n,
+		hlist_for_each_entry_safe(region, n,
 				&sync->pmem_stats, list) {
-			hlist_del(hnode);
+			hlist_del(&region->list);
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 				ion_free(client_for_ion, region->handle);
 #else

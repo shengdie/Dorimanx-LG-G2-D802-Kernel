@@ -38,7 +38,7 @@ static struct hlist_head	nlm_client_hosts[NLM_HOST_NRHASH];
 #define for_each_host_safe(host, next, chain, table) \
 	for ((chain) = (table); \
 	     (chain) < (table) + NLM_HOST_NRHASH; ++(chain)) \
-		hlist_for_each_entry_safe((host), (pos), (next), \
+		hlist_for_each_entry_safe((host), (next), \
 						(chain), h_hash)
 
 static unsigned long		next_gc;
