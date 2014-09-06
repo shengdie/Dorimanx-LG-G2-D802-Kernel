@@ -3032,12 +3032,12 @@ struct platform_device sglte2_qsc_8064_device = {
 };
 
 static struct msm_dcvs_freq_entry apq8064_freq[] = {
-	{ 384000, 166981,  345600},
-	{ 702000, 213049,  632502},
-	{1026000, 285712,  925613},
-	{1242000, 383945, 1176550},
-	{1458000, 419729, 1465478},
-	{1512000, 434116, 1546674},
+	{ 384000, 850, 0, 166981,  345600},
+	{ 702000, 925, 0, 213049,  632502},
+	{1026000, 1025, 0, 285712,  925613},
+	{1242000, 1100, 0, 383945, 1176550},
+	{1458000, 1137, 0, 419729, 1465478},
+	{1512000, 1150, 1, 434116, 1546674},
 };
 
 static struct msm_dcvs_sync_rule apq8064_dcvs_sync_rules[] = {
@@ -3067,6 +3067,7 @@ static struct msm_dcvs_core_info apq8064_core_info = {
 	.core_param		= {
 		.core_type	= MSM_DCVS_CORE_TYPE_CPU,
 	},
+	.freq_tbl		= &apq8064_freq[0],
 	.algo_param		= {
 		.disable_pc_threshold		= 1458000,
 		.em_win_size_min_us		= 100000,
