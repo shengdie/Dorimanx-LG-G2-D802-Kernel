@@ -2898,7 +2898,6 @@ config MSM_MODEM_SUBSYSTEM_RESTART_MONITOR
 	  This option enables a module which can notify user-space
 	  applications of modem subsystem power up/down event via uevent.
 
-<<<<<<< HEAD
 config UPDATE_LCDC_LUT_STANDALONE
          bool "Set initial Qualcomm LCDC lut MSM"
          default n
@@ -2917,12 +2916,10 @@ config HAS_MACH_MEMUTILS
 	help
 	Faster memcpy performance for Krait
 
-=======
 config FORCE_FAST_CHARGE
 	bool "Force AC charge mode at will"
 	default y
 	help
 		A simple sysfs interface to force adapters that
 		are detected as USB to charge as AC.
->>>>>>> 90bb3d4... USB Force Fast charge
 endif
