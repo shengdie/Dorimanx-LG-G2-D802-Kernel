@@ -31,6 +31,7 @@
 #include <sound/control.h>
 #include <linux/kthread.h>
 #include <linux/uaccess.h>
+#include <linux/mutex.h>
 #include <linux/wakelock.h>
 #include <mach/msm_rpcrouter.h>
 #include <mach/debug_mm.h>

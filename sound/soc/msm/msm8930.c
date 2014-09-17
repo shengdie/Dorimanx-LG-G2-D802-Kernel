@@ -15,6 +15,7 @@
 #include <linux/gpio.h>
 #include <linux/mfd/pm8xxx/spk.h>
 #include <linux/platform_device.h>
+#include <linux/gpio.h>
 #include <linux/slab.h>
 #include <sound/core.h>
 #include <sound/soc.h>
@@ -702,7 +703,7 @@ static void *def_sitar_mbhc_cal(void)
 #undef S
 #define S(X, Y) ((SITAR_MBHC_CAL_PLUG_TYPE_PTR(sitar_cal)->X) = (Y))
 	S(v_no_mic, 30);
-	S(v_hs_max, 1650);
+	S(v_hs_max, 1500);
 #undef S
 #define S(X, Y) ((SITAR_MBHC_CAL_BTN_DET_PTR(sitar_cal)->X) = (Y))
 	S(c[0], 62);

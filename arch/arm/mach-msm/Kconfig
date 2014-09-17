@@ -182,6 +182,7 @@ config ARCH_MSM8960
 	select USE_USER_ACCESSIBLE_TIMERS
 	select ARM_USE_USER_ACCESSIBLE_TIMERS
 	select MSM_USE_USER_ACCESSIBLE_TIMERS
+        select HAS_MACH_MEMUTILS
 
 config ARCH_MSM8930
 	bool "MSM8930"
@@ -314,6 +315,7 @@ config ARCH_MSM8226
 	select MSM_AUDIO_QDSP6V2 if SND_SOC
 	select MSM_RPM_REGULATOR_SMD
 	select ARM_HAS_SG_CHAIN
+        select HAS_MACH_MEMUTILS
 
 config ARCH_FSM9XXX
 	bool "FSM9XXX"
@@ -2907,5 +2909,11 @@ config LCD_KCAL_STANDALONE
         default n
          help
           Enable MSM generic LCDC temperature Calibration.
+
+config HAS_MACH_MEMUTILS
+	default y
+	bool "Motorola MSM memcpy enhancements"
+	help
+	Faster memcpy performance for Krait
 
 endif
