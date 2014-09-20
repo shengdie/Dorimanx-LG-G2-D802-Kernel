@@ -30,9 +30,9 @@
 #define HYSTERESIS			(7)
 #define UP_THRESH			(100)
 
-static const int valid_fqs[TABLE_SIZE] = {192000, 384000, 486000, 594000, 702000,
+static const int valid_fqs[TABLE_SIZE] = {81000 ,192000, 270000 ,384000, 486000, 594000, 702000,
 			810000, 918000, 1026000, 1134000, 1242000, 1350000,
-			1458000, 1512000};
+			1458000, 1512000 ,1728000};
 static void do_dbs_timer(struct work_struct *work);
 
 static int thresh_adj = 0;
