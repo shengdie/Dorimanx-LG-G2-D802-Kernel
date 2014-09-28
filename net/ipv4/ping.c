@@ -18,6 +18,10 @@
  * Pavel gave all rights to bugs to Vasiliy,
  * none of the bugs are Pavel's now.
  *
+ * Copyright (C) 2014 Sony Mobile Communications AB.
+ *
+ * NOTE: This file has been modified by Sony Mobile Communications AB.
+ * Modifications are licensed under the License.
  */
 
 #include <linux/uaccess.h>
