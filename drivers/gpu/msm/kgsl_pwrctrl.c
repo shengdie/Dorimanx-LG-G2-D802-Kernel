@@ -33,6 +33,9 @@
 #define GPU_SWFI_LATENCY	3
 #define UPDATE_BUSY_VAL		1000000
 #define UPDATE_BUSY		50
+#ifdef CONFIG_CPU_FREQ_GOV_SLIM
+int graphics_boost = 6;
+#endif
 
 struct clk_pair {
 	const char *name;
@@ -169,6 +172,9 @@ void kgsl_pwrctrl_pwrlevel_change(struct kgsl_device *device,
 	}
 
 	trace_kgsl_pwrlevel(device, pwr->active_pwrlevel, pwrlevel->gpu_freq);
+#ifdef CONFIG_CPU_FREQ_GOV_SLIM
+        graphics_boost = pwr->active_pwrlevel;
+#endif
 }
 
 EXPORT_SYMBOL(kgsl_pwrctrl_pwrlevel_change);
@@ -972,7 +978,12 @@ int kgsl_pwrctrl_init(struct kgsl_device *device)
 
 
 	pm_runtime_enable(device->parentdev);
+#ifdef CONFIG_HAS_EARLYSUSPEND
 	register_early_suspend(&device->display_off);
+#endif
+#ifdef CONFIG_POWERSUSPEND
+	register_power_suspend(&device->display_off);
+#endif
 	return result;
 
 clk_err:
@@ -992,7 +1003,12 @@ void kgsl_pwrctrl_close(struct kgsl_device *device)
 	KGSL_PWR_INFO(device, "close device %d\n", device->id);
 
 	pm_runtime_disable(device->parentdev);
+#ifdef CONFIG_HAS_EARLYSUSPEND
 	unregister_early_suspend(&device->display_off);
+#endif
+#ifdef CONFIG_POWERSUSPEND
+	unregister_power_suspend(&device->display_off);
+#endif
 
 	clk_put(pwr->ebi1_clk);
 
