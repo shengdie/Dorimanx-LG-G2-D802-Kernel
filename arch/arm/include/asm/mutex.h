@@ -13,10 +13,7 @@
  * accessors and use atomic_dec to avoid the extra xchg operations
  * on the locking slowpaths.
  */
-<<<<<<< HEAD
-=======
 #if __LINUX_ARM_ARCH__ < 6
->>>>>>> 4da09d9... ARM: 7467/1: mutex: use generic xchg-based implementation for ARMv6+
 #include <asm-generic/mutex-xchg.h>
 #else
 #include <asm-generic/mutex-dec.h>
