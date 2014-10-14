@@ -499,7 +499,7 @@ static void adreno_dump_a3xx(struct kgsl_device *device)
 	}
 }
 
-static void adreno_dump_a2xx(struct kgsl_device *device)
+/*static void adreno_dump_a2xx(struct kgsl_device *device)
 {
 	unsigned int r1, r2, r3, rbbm_status;
 	unsigned int cp_stat, rb_count;
@@ -674,7 +674,7 @@ static void adreno_dump_a2xx(struct kgsl_device *device)
 	kgsl_regread(device, MH_INTERRUPT_STATUS, &r2);
 	KGSL_LOG_DUMP(device,
 		"MH_INTERRUPT: MASK = %08X | STATUS   = %08X\n", r1, r2);
-}
+}*/
 
 int adreno_dump(struct kgsl_device *device, int manual)
 {
@@ -703,9 +703,7 @@ int adreno_dump(struct kgsl_device *device, int manual)
 	mb();
 
 	if (device->pm_dump_enable) {
-		if (adreno_is_a2xx(adreno_dev))
-			adreno_dump_a2xx(device);
-		else if (adreno_is_a3xx(adreno_dev))
+		if (adreno_is_a3xx(adreno_dev))
 			adreno_dump_a3xx(device);
 	}
 
@@ -881,16 +879,7 @@ int adreno_dump(struct kgsl_device *device, int manual)
 
 	/* Dump the registers if the user asked for it */
 	if (device->pm_regs_enabled) {
-		if (adreno_is_a20x(adreno_dev))
-			adreno_dump_regs(device, a200_registers,
-					a200_registers_count);
-		else if (adreno_is_a22x(adreno_dev))
-			adreno_dump_regs(device, a220_registers,
-					a220_registers_count);
-		else if (adreno_is_a225(adreno_dev))
-			adreno_dump_regs(device, a225_registers,
-				a225_registers_count);
-		else if (adreno_is_a3xx(adreno_dev)) {
+		if (adreno_is_a3xx(adreno_dev)) {
 			adreno_dump_regs(device, a3xx_registers,
 					a3xx_registers_count);
 
