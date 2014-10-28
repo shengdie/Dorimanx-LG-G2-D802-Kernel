@@ -96,7 +96,7 @@
 
 	PLD(	pld	[r1, #0]		)
 #ifdef CONFIG_ARM_PLD_64BYTE
-2:	PLD(	cmp	r2, #192			)
+2:	PLD(	cmp	r2, #32			)
 	PLD(	blt	.32cpy			)
 .64cpy:	PLD(	subs	r2, r2, #224		)
 	PLD(	pld	[r1, #60]		)

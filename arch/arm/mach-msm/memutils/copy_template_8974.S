@@ -34,11 +34,6 @@
  *	in provided registers and increments 'ptr' past those words.
  *	The'abort' argument is used for fixup tables.
  *
- * cpy8w dst src reg1 reg2 abort
- *
- *	This loads eight words starting from 'src' and stores them in 'dst'
- *	The 'abort' argument is used for fixup tables.
- *
  * ldr1b ptr reg cond abort
  *
  *	Similar to ldr1w, but it loads a byte and increments 'ptr' one byte.
@@ -100,38 +95,6 @@
 	PLD(	pld	[r1, #192]		)
 	PLD(	pld	[r1, #256]		)
 	PLD(	pld	[r1, #320]		)
-#ifdef CONFIG_ARM_PLD_64BYTE
-2:	PLD(	cmp	r2, #32			)
-	PLD(	blt	.32cpy			)
-.64cpy:	PLD(	subs	r2, r2, #512		)
-	PLD(	pld	[r1, #384]		)
-	PLD(	blt	4f			)
-	PLD(	pld	[r1, #448]		)
-	PLD(	pld	[r1, #512]		)
-3:	PLD(	pld	[r1, #576]		)
-#ifdef CONFIG_USE_LDRDSTRD_OVER_LDMSTM
-4:		cpy8w	r0, r1, r4, r5, abort = 20f
-		cpy8w	r0, r1, r4, r5, abort = 20f
-		subs	r2, r2, #64
-#else
-4:		ldr8w	r1, r3, r4, r5, r6, r7, r8, ip, lr, abort = 20f
-		str8w	r0, r3, r4, r5, r6, r7, r8, ip, lr, abort = 20f
-		ldr8w	r1, r3, r4, r5, r6, r7, r8, ip, lr, abort = 20f
-		subs	r2, r2, #64
-		str8w	r0, r3, r4, r5, r6, r7, r8, ip, lr, abort = 20f
-#endif
-		bge 3b
-	PLD(	cmn	r2, #512		)
-	PLD(	bge	4b			)
-	PLD(	cmn	r2, #224		)
-	PLD(	blt	5f			)
-#ifdef CONFIG_USE_LDRDSTRD_OVER_LDMSTM
-.32cpy:		cpy8w	r0, r1, r4, r5, abort = 20f
-#else
-.32cpy:		ldr8w	r1, r3, r4, r5, r6, r7, r8, ip, lr, abort = 20f
-		str8w	r0, r3, r4, r5, r6, r7, r8, ip, lr, abort = 20f
-#endif
-#else
 2:	PLD(	subs	r2, r2, #512		)
 	/* R2 is now -800 offset from the size passed in*/
 	PLD(	pld	[r1, #384]		)
@@ -145,7 +108,6 @@
 		bge	3b
 	PLD(	cmn	r2, #512		)
 	PLD(	bge	4b			)
-#endif
 
 5:		ands	ip, r2, #28
 		rsb	ip, ip, #32
