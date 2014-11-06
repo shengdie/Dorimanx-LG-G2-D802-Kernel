@@ -160,7 +160,7 @@ check_name(struct dentry *direntry)
 static int cifs_do_create(struct inode *inode, struct dentry *direntry,
 			  int xid, struct tcon_link *tlink, unsigned oflags,
 			  umode_t mode, __u32 *oplock, __u16 *fileHandle,
-			  bool *created)
+			  int *created)
 {
 	int rc = -ENOENT;
 	int create_options = CREATE_NOT_DIR;
@@ -311,7 +311,7 @@ static int cifs_do_create(struct inode *inode, struct dentry *direntry,
 				.device	= 0,
 		};
 
-		*created = true;
+		*created |= FILE_CREATED;
 		if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_SET_UID) {
 			args.uid = (__u64) current_fsuid();
 			if (inode->i_mode & S_ISGID)
@@ -376,10 +376,10 @@ out:
 	return rc;
 }
 
-struct file *
+int
 cifs_atomic_open(struct inode *inode, struct dentry *direntry,
-		 struct opendata *od, unsigned oflags, umode_t mode,
-		 bool *created)
+		 struct file *file, unsigned oflags, umode_t mode,
+		 int *opened)
 {
 	int rc;
 	int xid;
@@ -401,17 +401,16 @@ cifs_atomic_open(struct inode *inode, struct dentry *direntry,
 	 * in network traffic in the other paths.
 	 */
 	if (!(oflags & O_CREAT)) {
-		struct dentry *res = cifs_lookup(inode, direntry, NULL);
+		struct dentry *res = cifs_lookup(inode, direntry, 0);
 		if (IS_ERR(res))
-			return ERR_CAST(res);
+			return PTR_ERR(res);
 
-		finish_no_open(od, res);
-		return NULL;
+		return finish_no_open(file, res);
 	}
 
 	rc = check_name(direntry);
 	if (rc)
-		return ERR_PTR(rc);
+		return rc;
 
 	xid = GetXid();
 
@@ -426,15 +425,13 @@ cifs_atomic_open(struct inode *inode, struct dentry *direntry,
 	tcon = tlink_tcon(tlink);
 
 	rc = cifs_do_create(inode, direntry, xid, tlink, oflags, mode,
-			    &oplock, &fileHandle, created);
+			    &oplock, &fileHandle, opened);
 
-	if (rc) {
-		filp = ERR_PTR(rc);
+	if (rc)
 		goto out;
-	}
 
-	filp = finish_open(od, direntry, generic_file_open);
-	if (IS_ERR(filp)) {
+	rc = finish_open(file, direntry, generic_file_open, opened);
+	if (rc) {
 		CIFSSMBClose(xid, tcon, fileHandle);
 		goto out;
 	}
@@ -443,18 +440,18 @@ cifs_atomic_open(struct inode *inode, struct dentry *direntry,
 	if (pfile_info == NULL) {
 		CIFSSMBClose(xid, tcon, fileHandle);
 		fput(filp);
-		filp = ERR_PTR(-ENOMEM);
+		rc = -ENOMEM;
 	}
 
 out:
 	cifs_put_tlink(tlink);
 free_xid:
 	FreeXid(xid);
-	return filp;
+	return rc;
 }
 
 int cifs_create(struct inode *inode, struct dentry *direntry, umode_t mode,
-		struct nameidata *nd)
+		bool excl)
 {
 	int rc;
 	int xid = GetXid();
@@ -469,7 +466,7 @@ int cifs_create(struct inode *inode, struct dentry *direntry, umode_t mode,
 	struct tcon_link *tlink;
 	__u16 fileHandle;
 	__u32 oplock;
-	bool created = true;
+	int created = FILE_CREATED;
 
 	cFYI(1, "cifs_create parent inode = 0x%p name is: %s and dentry = 0x%p",
 	     inode, direntry->d_name.name, direntry);
@@ -624,7 +621,7 @@ mknod_out:
 
 struct dentry *
 cifs_lookup(struct inode *parent_dir_inode, struct dentry *direntry,
-	    struct nameidata *nd)
+	    unsigned int flags)
 {
 	int xid;
 	int rc = 0; /* to get around spurious gcc warning, set to zero here */
