@@ -223,42 +223,26 @@ static void exfat_write_super(struct super_block *sb);
 
 static void __lock_super(struct super_block *sb)
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
-	lock_super(sb);
-#else
 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
 	mutex_lock(&sbi->s_lock);
-#endif
 }
 
 static void __unlock_super(struct super_block *sb)
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
-	unlock_super(sb);
-#else
 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
 	mutex_unlock(&sbi->s_lock);
-#endif
 }
 
 static int __is_sb_dirty(struct super_block *sb)
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
-	return sb->s_dirt;
-#else
 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
 	return sbi->s_dirt;
-#endif
 }
 
 static void __set_sb_clean(struct super_block *sb)
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
-	sb->s_dirt = 0;
-#else
 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
 	sbi->s_dirt = 0;
-#endif
 }
 
 static int __exfat_revalidate(struct dentry *dentry)
@@ -1868,10 +1852,8 @@ static void exfat_free_super(struct exfat_sb_info *sbi)
 		unload_nls(sbi->nls_io);
 	if (sbi->options.iocharset != exfat_default_iocharset)
 		kfree(sbi->options.iocharset);
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
 	/* mutex_init is in exfat_fill_super function. only for 3.7+ */
 	mutex_destroy(&sbi->s_lock);
-#endif
 	kfree(sbi);
 }
 
@@ -2007,9 +1989,6 @@ const struct super_operations exfat_sops = {
 	.evict_inode  = exfat_evict_inode,
 #endif
 	.put_super     = exfat_put_super,
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
-	.write_super   = exfat_write_super,
-#endif
 	.sync_fs       = exfat_sync_fs,
 	.statfs        = exfat_statfs,
 	.remount_fs    = exfat_remount,
@@ -2260,9 +2239,7 @@ static int exfat_fill_super(struct super_block *sb, void *data, int silent)
 	sbi = kzalloc(sizeof(struct exfat_sb_info), GFP_KERNEL);
 	if (!sbi)
 		return -ENOMEM;
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
 	mutex_init(&sbi->s_lock);
-#endif
 	sb->s_fs_info = sbi;
 	sb->s_flags |= MS_NODIRATIME;
 	sb->s_magic = EXFAT_SUPER_MAGIC;
